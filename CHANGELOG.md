@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.15
+## 1.2.16
 
 Current release of **PuSH-IT**. See [README](README.md) for features, installation, and usage.
 
