@@ -17,14 +17,12 @@ This repository is a **generic product** for any Wappler project. Docs, comments
 
 ## Install
 
-Pick **one** install path and follow it completely:
+| Path | |
+|------|--|
+| **npm** | Wappler Project Settings → Extensions (`wappler-push-it`) |
+| **Git** | [Extension Installer](https://www.mrcheese.co.uk/extensions/install) or manual copy below |
 
-| Path | Best for |
-|------|----------|
-| **Git** (recommended) | Most reliable; uses `git clone` + copy from the repo |
-| **npm** | You already use Wappler Project Settings → Extensions |
-
-Both paths copy files into `extensions/`, `lib/modules/`, and `public/`. The npm path also requires verifying `node_modules/wappler-push-it` exists **before** you run any copy commands. PuSH-IT needs **Both** Server Connect and App Connect.
+Git manual copy installs into `extensions/`, `lib/modules/`, and `public/`.
 
 ### Git install — Extension Installer (recommended)
 
