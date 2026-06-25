@@ -1,0 +1,252 @@
+{
+  "type": "pushit_send",
+  "module": "pushit",
+  "action": "send",
+  "groupTitle": "Mr Cheese",
+  "groupIcon": "fas fa-lg fa-cheese comp-exec",
+  "title": "PuSH-IT Send Notification",
+  "icon": "fas fa-lg fa-bell comp-exec",
+  "outputType": "object",
+  "help": "Send Web Push via VAPID (no paid API). After a DB query of subscription rows: set mode to Send to query results, bind sourceData, map endpoint/p256dh/auth column names. See README Troubleshooting if you get no_subscription.",
+  "dataScheme": [
+    {
+      "name": "success",
+      "type": "boolean"
+    },
+    {
+      "name": "sent",
+      "type": "number"
+    },
+    {
+      "name": "failed",
+      "type": "number"
+    },
+    {
+      "name": "no_subscription",
+      "type": "number"
+    },
+    {
+      "name": "total",
+      "type": "number"
+    },
+    {
+      "name": "results",
+      "type": "array"
+    },
+    {
+      "name": "error",
+      "type": "text"
+    }
+  ],
+  "dataPickObject": true,
+  "properties": [
+    {
+      "group": "Settings",
+      "variables": [
+        {
+          "name": "actionName",
+          "optionName": "name",
+          "title": "Name",
+          "type": "text",
+          "required": true,
+          "defaultValue": "",
+          "baseName": "pushSend",
+          "help": "Step name for bindings (e.g. {{pushSend.sent}}, {{pushSend.results}})"
+        },
+        {
+          "name": "actionOutput",
+          "optionName": "output",
+          "title": "Output",
+          "type": "boolean",
+          "initValue": true,
+          "defaultValue": false,
+          "help": "Output sent/failed counts and per-recipient results for bindings or SMS fallback"
+        },
+        {
+          "name": "mode",
+          "optionName": "mode",
+          "title": "Send mode",
+          "type": "droplist",
+          "values": [
+            {
+              "title": "Single subscription",
+              "value": "single",
+              "show": [
+                "subscription"
+              ],
+              "hide": [
+                "sourceData",
+                "subscriptionColumn",
+                "endpointColumn",
+                "p256dhColumn",
+                "authColumn",
+                "userIdColumn",
+                "entityIdColumn"
+              ]
+            },
+            {
+              "title": "Send to query results",
+              "value": "fromQuery",
+              "show": [
+                "sourceData",
+                "subscriptionColumn",
+                "endpointColumn",
+                "p256dhColumn",
+                "authColumn",
+                "userIdColumn",
+                "entityIdColumn"
+              ],
+              "hide": [
+                "subscription"
+              ]
+            }
+          ],
+          "defaultValue": "fromQuery",
+          "help": "Required for batch send. Bind your query step to Query results and set column names (endpoint, p256dh, auth). Default is fromQuery."
+        }
+      ]
+    },
+    {
+      "group": "Recipients",
+      "variables": [
+        {
+          "name": "subscription",
+          "optionName": "subscription",
+          "title": "Subscription JSON",
+          "type": "textarea",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Single mode only: full PushSubscription JSON"
+        },
+        {
+          "name": "sourceData",
+          "optionName": "sourceData",
+          "title": "Query results",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Bind the full query output (e.g. {{subscribersQuery}}). Step must run above this Send step."
+        },
+        {
+          "name": "subscriptionColumn",
+          "optionName": "subscriptionColumn",
+          "title": "Subscription column (JSON)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional if using separate columns. Picker: {{query[0].subscriptionJson}}"
+        },
+        {
+          "name": "endpointColumn",
+          "optionName": "endpointColumn",
+          "title": "Endpoint column",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Column name in each row, e.g. endpoint (or picker {{query[0].endpoint}}). With p256dh + auth when not using subscription_json alone."
+        },
+        {
+          "name": "p256dhColumn",
+          "optionName": "p256dhColumn",
+          "title": "p256dh column",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Data picker: public key column from your query (e.g. {{subscribersQuery[0].p256dh}}). Use with Endpoint + auth when not storing full JSON."
+        },
+        {
+          "name": "authColumn",
+          "optionName": "authColumn",
+          "title": "auth column",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Data picker: auth secret column from your query (e.g. {{subscribersQuery[0].auth}}). Required with Endpoint + p256dh columns."
+        },
+        {
+          "name": "userIdColumn",
+          "optionName": "userIdColumn",
+          "title": "User ID column (results)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Included in results for SMS fallback routing"
+        },
+        {
+          "name": "entityIdColumn",
+          "optionName": "entityIdColumn",
+          "title": "Entity ID column (results)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Scoped resource id (property, account, etc.) echoed in results for logging or follow-up steps"
+        }
+      ]
+    },
+    {
+      "group": "Notification",
+      "variables": [
+        {
+          "name": "title",
+          "optionName": "title",
+          "title": "Title",
+          "type": "text",
+          "required": true,
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Notification headline shown to the user. Bind from your record or use a literal."
+        },
+        {
+          "name": "body",
+          "optionName": "body",
+          "title": "Body",
+          "type": "textarea",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Main message text. Title or body is required; both may be bound from query/post data."
+        },
+        {
+          "name": "url",
+          "optionName": "url",
+          "title": "Click URL",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Defaults to PUSH_IT_DEFAULT_URL env if set"
+        },
+        {
+          "name": "icon",
+          "optionName": "icon",
+          "title": "Icon URL",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Defaults to PUSH_IT_DEFAULT_ICON env if set"
+        },
+        {
+          "name": "tag",
+          "optionName": "tag",
+          "title": "Tag",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Replace duplicate notifications with same tag"
+        },
+        {
+          "name": "data",
+          "optionName": "data",
+          "title": "Extra data (JSON)",
+          "type": "textarea",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional JSON object for service worker / client"
+        }
+      ]
+    }
+  ],
+  "usedModules": {
+    "node": {
+      "web-push": "^3.6.7"
+    }
+  }
+}

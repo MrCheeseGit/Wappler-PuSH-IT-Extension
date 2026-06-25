@@ -14,27 +14,27 @@
     ],
     "copy": [
       {
-        "src": "pushit.js",
+        "src": "server_connect/modules/pushit.js",
         "dest": "lib/modules/pushit.js"
       },
       {
-        "src": "pushit.js",
+        "src": "server_connect/modules/pushit.js",
         "dest": "extensions/server_connect/modules/pushit.js"
       },
       {
-        "src": "pushit_prepare.hjson",
+        "src": "server_connect/modules/pushit_prepare.hjson",
         "dest": "extensions/server_connect/modules/pushit_prepare.hjson"
       },
       {
-        "src": "pushit_send.hjson",
+        "src": "server_connect/modules/pushit_send.hjson",
         "dest": "extensions/server_connect/modules/pushit_send.hjson"
       },
       {
-        "src": "pushit_deactivate.hjson",
+        "src": "server_connect/modules/pushit_deactivate.hjson",
         "dest": "extensions/server_connect/modules/pushit_deactivate.hjson"
       },
       {
-        "src": "pushit_service_worker.js",
+        "src": "includes/pushit_service_worker.js",
         "dest": "public/pushit_service_worker.js"
       }
     ],
@@ -56,15 +56,15 @@
         "dest": "extensions/app_connect/components/pushit_components.hjson"
       },
       {
-        "src": "app_connect/includes/dmx-pushit-subscribe.js",
+        "src": "includes/dmx-pushit-subscribe.js",
         "dest": "public/js/dmx-pushit-subscribe.js"
       },
       {
-        "src": "app_connect/includes/dmx-pushit-subscribe.css",
+        "src": "includes/dmx-pushit-subscribe.css",
         "dest": "public/css/dmx-pushit-subscribe.css"
       },
       {
-        "src": "app_connect/includes/pushit_service_worker.js",
+        "src": "includes/pushit_service_worker.js",
         "dest": "public/pushit_service_worker.js"
       }
     ],

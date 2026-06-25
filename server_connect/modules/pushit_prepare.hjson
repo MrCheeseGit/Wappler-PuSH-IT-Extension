@@ -1,0 +1,135 @@
+{
+  "type": "pushit_prepare",
+  "module": "pushit",
+  "action": "prepare",
+  "groupTitle": "Mr Cheese",
+  "groupIcon": "fas fa-lg fa-cheese comp-exec",
+  "title": "PuSH-IT Prepare Subscription",
+  "icon": "fas fa-lg fa-bell comp-data",
+  "outputType": "object",
+  "help": "Parse browser PushSubscription JSON into flat fields for Database Insert. Bind {{$_POST.subscription}}. Test with curl or a browser page — Wappler API Run often has no POST body.",
+  "dataScheme": [
+    {
+      "name": "success",
+      "type": "boolean"
+    },
+    {
+      "name": "valid",
+      "type": "boolean"
+    },
+    {
+      "name": "endpoint",
+      "type": "text"
+    },
+    {
+      "name": "p256dh",
+      "type": "text"
+    },
+    {
+      "name": "auth",
+      "type": "text"
+    },
+    {
+      "name": "userUUID",
+      "type": "text"
+    },
+    {
+      "name": "entityId",
+      "type": "text"
+    },
+    {
+      "name": "eventTypes",
+      "type": "text"
+    },
+    {
+      "name": "subscriptionJson",
+      "type": "text"
+    },
+    {
+      "name": "error",
+      "type": "text"
+    }
+  ],
+  "dataPickObject": true,
+  "properties": [
+    {
+      "group": "Settings",
+      "variables": [
+        {
+          "name": "actionName",
+          "optionName": "name",
+          "title": "Name",
+          "type": "text",
+          "required": true,
+          "defaultValue": "",
+          "baseName": "pushPrepare",
+          "help": "Step name for bindings (e.g. {{pushPrepare.endpoint}})"
+        },
+        {
+          "name": "actionOutput",
+          "optionName": "output",
+          "title": "Output",
+          "type": "boolean",
+          "initValue": true,
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "group": "Subscription (from browser POST)",
+      "variables": [
+        {
+          "name": "subscription",
+          "optionName": "subscription",
+          "title": "Subscription JSON",
+          "type": "textarea",
+          "required": true,
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Bind {{$_POST.subscription}} or the PushSubscription JSON from your opt-in page"
+        },
+        {
+          "name": "userUUID",
+          "optionName": "userUUID",
+          "title": "User ID (passthrough)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. Bind portal user id for Database Insert (e.g. {{securityProvider.identity}})"
+        },
+        {
+          "name": "entityId",
+          "optionName": "entityId",
+          "title": "Entity ID (passthrough)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional scope: property id, account id, etc. (e.g. {{$_POST.entityId}})"
+        },
+        {
+          "name": "eventTypes",
+          "optionName": "eventTypes",
+          "title": "Event types (passthrough)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional comma list: reservation,account"
+        },
+        {
+          "name": "userAgent",
+          "optionName": "userAgent",
+          "title": "User agent (passthrough)",
+          "type": "text",
+          "serverDataBindings": true,
+          "defaultValue": "",
+          "help": "Optional. {{$_SERVER.HTTP_USER_AGENT}} or client hint"
+        }
+      ]
+    }
+  ],
+  "usedModules": {
+    "node": {
+      "web-push": "^3.6.7"
+    }
+  }
+}

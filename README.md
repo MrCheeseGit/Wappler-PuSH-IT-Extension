@@ -61,12 +61,12 @@ Run from your **Wappler project root** (the folder that contains `package.json`)
 ```bash
 git clone https://github.com/MrCheeseGit/Wappler-PuSH-IT-Extension.git ../Wappler-PuSH-IT-Extension
 
-cp ../Wappler-PuSH-IT-Extension/pushit.js lib/modules/pushit.js
-cp ../Wappler-PuSH-IT-Extension/pushit.js extensions/server_connect/modules/pushit.js
-cp ../Wappler-PuSH-IT-Extension/pushit_prepare.hjson extensions/server_connect/modules/
-cp ../Wappler-PuSH-IT-Extension/pushit_send.hjson extensions/server_connect/modules/
-cp ../Wappler-PuSH-IT-Extension/pushit_deactivate.hjson extensions/server_connect/modules/
-cp ../Wappler-PuSH-IT-Extension/pushit_service_worker.js public/pushit_service_worker.js
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit.js lib/modules/pushit.js
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit.js extensions/server_connect/modules/pushit.js
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit_prepare.hjson extensions/server_connect/modules/
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit_send.hjson extensions/server_connect/modules/
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit_deactivate.hjson extensions/server_connect/modules/
+cp ../Wappler-PuSH-IT-Extension/server_connect/modules/pushit_service_worker.js public/pushit_service_worker.js
 ```
 
 ### Manual install (Git) — App Connect (Subscribe component)
@@ -77,9 +77,9 @@ Copy manually from your **Wappler project root** (or use the Git Extension Insta
 git clone https://github.com/MrCheeseGit/Wappler-PuSH-IT-Extension.git ../Wappler-PuSH-IT-Extension
 
 cp ../Wappler-PuSH-IT-Extension/app_connect/components.hjson extensions/app_connect/components/pushit_components.hjson
-cp ../Wappler-PuSH-IT-Extension/app_connect/includes/dmx-pushit-subscribe.js public/js/
-cp ../Wappler-PuSH-IT-Extension/app_connect/includes/dmx-pushit-subscribe.css public/css/
-cp ../Wappler-PuSH-IT-Extension/app_connect/includes/pushit_service_worker.js public/pushit_service_worker.js
+cp ../Wappler-PuSH-IT-Extension/includes/dmx-pushit-subscribe.js public/js/
+cp ../Wappler-PuSH-IT-Extension/includes/dmx-pushit-subscribe.css public/css/
+cp ../Wappler-PuSH-IT-Extension/includes/pushit_service_worker.js public/pushit_service_worker.js
 ```
 
 Quit Wappler completely and reopen. Add **PuSH-IT Subscribe** from the **Mr Cheese** component group.
