@@ -69,7 +69,7 @@
       }
     ],
     "notes": [
-      "Or install via Wappler Project Settings \u2192 Extensions (npm): verify node_modules, run the npm install assistant copy script (Both), then Project Updater.",
+      "npm: Project Settings → Extensions, npm install, Project Updater, then quit Wappler completely and reopen.",
       "Register the extension in .wappler/project.json if the component picker stays empty.",
       "Quit Wappler completely and reopen."
     ]
