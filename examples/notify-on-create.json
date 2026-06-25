@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "title": "Notify subscribers when staff creates a record",
+    "description": "Query-first: find push subscriptions for an entity, then send."
+  },
+  "flow": [
+    {
+      "step": "dmxDatabaseQuery",
+      "name": "subscribersQuery",
+      "comment": "Example: subscriptions for entity_id = new record's scope",
+      "options": {
+        "connection": "your_connection_name",
+        "sql": "SELECT user_uuid, entity_id, endpoint, p256dh, auth FROM push_subscriptions WHERE entity_id = :entityId AND active = 1"
+      },
+      "params": {
+        "entityId": "{{$_POST.entityId}}"
+      }
+    },
+    {
+      "step": "pushit_send",
+      "name": "pushSend",
+      "options": {
+        "mode": "fromQuery",
+        "sourceData": "{{subscribersQuery}}",
+        "endpointColumn": "{{subscribersQuery[0].endpoint}}",
+        "p256dhColumn": "{{subscribersQuery[0].p256dh}}",
+        "authColumn": "{{subscribersQuery[0].auth}}",
+        "userIdColumn": "{{subscribersQuery[0].user_uuid}}",
+        "entityIdColumn": "{{subscribersQuery[0].entity_id}}",
+        "title": "New update",
+        "body": "{{$_POST.summary}}",
+        "url": "https://yoursite.com/portal/details?id={{$_POST.recordId}}"
+      }
+    }
+  ],
+  "notes": [
+    "Sends to all active subscription rows returned by the query (default).",
+    "Deactivate or delete rows when web-push returns expired (410) — check pushSend.results."
+  ]
+}

@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.npmrc
+
+# Secrets / local env (VAPID keys live in Wappler project env, not in repo)
+.env
+.env.*
+!.env.example
+
+# Internal planning notes (not for publication)
+plan.md
+
+# Editor / tooling
+.cursor/
+.vscode/

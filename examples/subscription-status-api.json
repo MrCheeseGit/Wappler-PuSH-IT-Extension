@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "title": "Subscription status (for dmx-pushit-subscribe status-url)",
+    "description": "Read-only check: active push_subscriptions row for the logged-in user. Wappler: leave Output ON for the query step."
+  },
+  "settings": {
+    "options": {
+      "nocsrf": true
+    }
+  },
+  "meta_post": [
+    "userUUID",
+    "entityId",
+    "endpoint"
+  ],
+  "flow": [
+    {
+      "step": "SecurityProvider",
+      "name": "yourPortal",
+      "comment": "Use session identity in the query WHERE, e.g. {{yourPortal.identity}}"
+    },
+    {
+      "step": "dmxDatabaseQuery",
+      "name": "findActive",
+      "comment": "Output ON in Wappler so you can see the step result in the API designer.",
+      "output": true,
+      "options": {
+        "connection": "YOUR_CONNECTION",
+        "sql": {
+          "type": "select",
+          "table": "push_subscriptions",
+          "columns": ["endpoint", "user_uuid", "active"],
+          "wheres": {
+            "rules": [
+              { "field": "push_subscriptions.user_uuid", "operator": "equal", "value": "{{yourPortal.identity}}" },
+              { "field": "push_subscriptions.active", "operator": "equal", "value": 1 }
+            ]
+          },
+          "limit": 1
+        }
+      }
+    }
+  ],
+  "response_examples": {
+    "subscribed": {
+      "findActive": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/…",
+        "user_uuid": "…",
+        "active": 1
+      }
+    },
+    "not_subscribed": {
+      "findActive": {}
+    }
+  },
+  "notes": [
+    "Pair with status-url on dmx-pushit-subscribe. Component POSTs { userUUID, entityId?, endpoint? }.",
+    "No extra Set Value step required — dmx-pushit-subscribe v1.2.9+ reads findActive.active === 1 as subscribed.",
+    "Optional: add a final Set Value / Response with { subscribed: true/false } if you prefer that shape.",
+    "Compare active to number 1 in SQL (TINYINT), not boolean true.",
+    "For sending: query the same table in your notify APIs before PuSH-IT Send."
+  ]
+}

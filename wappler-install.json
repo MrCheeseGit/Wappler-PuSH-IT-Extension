@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "id": "push-it",
+  "name": "PuSH-IT",
+  "version": "1.2.15",
+  "cloneDir": "Wappler-PuSH-IT-Extension",
+  "hasServerConnect": true,
+  "hasAppConnect": true,
+  "readme": "https://github.com/MrCheeseGit/Wappler-PuSH-IT-Extension#installation",
+  "serverConnect": {
+    "directories": [
+      "extensions/server_connect/modules",
+      "lib/modules"
+    ],
+    "copy": [
+      {
+        "src": "pushit.js",
+        "dest": "lib/modules/pushit.js"
+      },
+      {
+        "src": "pushit.js",
+        "dest": "extensions/server_connect/modules/pushit.js"
+      },
+      {
+        "src": "pushit_prepare.hjson",
+        "dest": "extensions/server_connect/modules/pushit_prepare.hjson"
+      },
+      {
+        "src": "pushit_send.hjson",
+        "dest": "extensions/server_connect/modules/pushit_send.hjson"
+      },
+      {
+        "src": "pushit_deactivate.hjson",
+        "dest": "extensions/server_connect/modules/pushit_deactivate.hjson"
+      },
+      {
+        "src": "pushit_service_worker.js",
+        "dest": "public/pushit_service_worker.js"
+      }
+    ],
+    "notes": [
+      "Copy pushit.js to both lib/modules/ and extensions/server_connect/modules/.",
+      "Set VAPID env vars in Wappler \u2014 see the repo README.",
+      "Quit Wappler completely and restart."
+    ]
+  },
+  "appConnect": {
+    "directories": [
+      "extensions/app_connect/components",
+      "public/js",
+      "public/css"
+    ],
+    "copy": [
+      {
+        "src": "app_connect/components.hjson",
+        "dest": "extensions/app_connect/components/pushit_components.hjson"
+      },
+      {
+        "src": "app_connect/includes/dmx-pushit-subscribe.js",
+        "dest": "public/js/dmx-pushit-subscribe.js"
+      },
+      {
+        "src": "app_connect/includes/dmx-pushit-subscribe.css",
+        "dest": "public/css/dmx-pushit-subscribe.css"
+      },
+      {
+        "src": "app_connect/includes/pushit_service_worker.js",
+        "dest": "public/pushit_service_worker.js"
+      }
+    ],
+    "notes": [
+      "Or install via Wappler Project Settings \u2192 Extensions (npm): verify node_modules, run the npm install assistant copy script (Both), then Project Updater.",
+      "Register the extension in .wappler/project.json if the component picker stays empty.",
+      "Quit Wappler completely and reopen."
+    ]
+  }
+}

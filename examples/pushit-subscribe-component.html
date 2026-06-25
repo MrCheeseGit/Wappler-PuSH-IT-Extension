@@ -1,0 +1,48 @@
+<!--
+  PuSH-IT Subscribe — App Connect component example (paste into a Wappler page or use as reference).
+
+  Prerequisites:
+  - Server Connect: vapid_public + subscribe APIs (see subscribe-entity-scoped.json)
+  - public/pushit_service_worker.js (extension copyFiles or manual cp)
+  - VAPID env vars on the Node target
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PuSH-IT Subscribe example</title>
+</head>
+<body>
+  <dmx-app id="app1">
+    <dmx-pushit-subscribe
+      id="pushSubscribe"
+      vapid-public-url="/api/pushNotifications/vapid_public"
+      subscribe-url="/api/pushNotifications/subscribe"
+      unsubscribe-url="/api/pushNotifications/unsubscribe"
+      service-worker-url="/pushit_service_worker.js"
+      dmx-bind:entity-id="'demo-entity-1'"
+      dmx-bind:user-uuid="identity.value"
+      event-types="admin"
+      button-text="Enable notifications"
+      subscribed-text="Notifications enabled"
+      denied-text="Notifications disabled"
+      show-unsubscribe="true"
+    ></dmx-pushit-subscribe>
+
+    <!-- In production bind to Server Connect, e.g. dmx-bind:user-uuid="userProfile.data.getUser.uuid" -->
+    <input type="hidden" is="dmx-input" id="identity" value="00000000-0000-4000-8000-000000000001">
+
+  <!--
+    Wire events in Wappler (PuSH-IT Subscribe group):
+      success / unsubscribed → toast, reload, etc.
+
+    Component data:
+      {{pushSubscribe.data.status}}   idle | loading | subscribed | denied | error | unsupported
+      {{pushSubscribe.data.endpoint}}
+      {{pushSubscribe.data.error}}
+
+    Bind User UUID / Entity ID with the expression picker (dmx-bind:), not plain user-uuid="path.to.field".
+  -->
+  </dmx-app>
+</body>
+</html>

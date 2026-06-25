@@ -1,0 +1,33 @@
+{
+  "name": "wappler-push-it",
+  "version": "1.2.15",
+  "description": "PuSH-IT \u2014 Wappler Server Connect extension for Web Push (VAPID): prepare subscriptions and send notifications",
+  "main": "pushit.js",
+  "homepage": "https://www.mrcheese.co.uk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrCheeseGit/Wappler-PuSH-IT-Extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MrCheeseGit/Wappler-PuSH-IT-Extension/issues"
+  },
+  "keywords": [
+    "wappler-extension",
+    "wappler",
+    "server-connect",
+    "app-connect",
+    "extension",
+    "push-it",
+    "pushit",
+    "web-push",
+    "vapid",
+    "notifications",
+    "mrcheese"
+  ],
+  "author": "Mr Cheese",
+  "license": "SEE LICENSE IN LICENSE",
+  "wappler": {
+    "module": "pushit",
+    "version": "1.2.15"
+  }
+}

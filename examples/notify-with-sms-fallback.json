@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "Push notify with optional ClickSend SMS fallback",
+    "description": "PuSH-IT and ClickSend are separate steps — no code coupling between extensions."
+  },
+  "flow": [
+    {
+      "step": "dmxDatabaseQuery",
+      "name": "subscribersQuery",
+      "options": {
+        "connection": "your_connection_name",
+        "sql": "SELECT s.user_uuid, s.entity_id, s.endpoint, s.p256dh, s.auth, u.phone FROM push_subscriptions s JOIN users u ON u.id = s.user_uuid WHERE s.entity_id = :entityId AND s.active = 1"
+      }
+    },
+    {
+      "step": "pushit_send",
+      "name": "pushSend",
+      "options": {
+        "mode": "fromQuery",
+        "sourceData": "{{subscribersQuery}}",
+        "endpointColumn": "endpoint",
+        "p256dhColumn": "p256dh",
+        "authColumn": "auth",
+        "userIdColumn": "user_uuid",
+        "title": "Alert",
+        "body": "You have a new message."
+      }
+    },
+    {
+      "step": "comment",
+      "text": "Option A: second query for users without push. Option B: filter pushSend.results in a follow-up API using Repeat/Condition on status !== sent, then ClickSend fromQuery."
+    },
+    {
+      "step": "dmxDatabaseQuery",
+      "name": "smsFallbackQuery",
+      "comment": "Users with phone but no successful push for this event — shape to your schema",
+      "options": {
+        "connection": "your_connection_name"
+      }
+    },
+    {
+      "step": "clicksend_sms",
+      "name": "smsFallback",
+      "comment": "Requires ClickSend-SMS-Extension installed separately",
+      "options": {
+        "mode": "fromQuery",
+        "sourceData": "{{smsFallbackQuery}}",
+        "phoneColumn": "phone",
+        "message": "You have a new update. Visit https://yoursite.com"
+      }
+    }
+  ],
+  "notes": [
+    "pushSend.results[].status: sent | failed | no_subscription",
+    "Use failed/no_subscription rows to drive SMS or email in your own query logic.",
+    "ClickSend credentials: CLICKSEND_USERNAME, CLICKSEND_API_KEY in project env."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "Unsubscribe / deactivate push",
+    "description": "Client POSTs subscription JSON (or endpoint); row set inactive in push_subscriptions."
+  },
+  "settings": {
+    "options": {
+      "nocsrf": true
+    }
+  },
+  "meta_post": [
+    "subscription",
+    "endpoint",
+    "userUUID",
+    "entityId"
+  ],
+  "flow": [
+    {
+      "step": "pushit_deactivate",
+      "name": "pushDeactivate",
+      "options": {
+        "subscription": "{{$_POST.subscription}}",
+        "endpoint": "{{$_POST.endpoint}}",
+        "userUUID": "{{$_POST.userUUID}}",
+        "entityId": "{{$_POST.entityId}}"
+      }
+    },
+    {
+      "step": "dmxDatabaseUpdater",
+      "name": "deactivateSubscription",
+      "comment": "Set active = 0 for matching endpoint. Map your table/columns.",
+      "options": {
+        "connection": "YOUR_CONNECTION",
+        "sql": {
+          "type": "update",
+          "table": "push_subscriptions",
+          "values": [
+            { "column": "active", "value": 0 },
+            { "column": "updated_date", "value": "{{NOW}}" }
+          ],
+          "wheres": {
+            "rules": [
+              {
+                "field": "push_subscriptions.endpoint",
+                "operator": "equal",
+                "value": "{{pushDeactivate.endpoint}}"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Pair with dmx-pushit-subscribe unsubscribe-url on the App Connect component.",
+    "Browser calls subscription.unsubscribe() after this API succeeds."
+  ]
+}

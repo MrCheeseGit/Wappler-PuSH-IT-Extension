@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "Send test push (dev)",
+    "description": "Query the newest active subscription and send a thank-you test notification. Adapt connection name and route to your project."
+  },
+  "flow": [
+    {
+      "step": "dmxDatabaseQuery",
+      "name": "query",
+      "comment": "Latest active row only — set limit: 1 and order by id desc in the query builder JSON",
+      "options": {
+        "connection": "your_connection_name",
+        "sql": "SELECT * FROM push_subscriptions WHERE active = 1 ORDER BY id DESC LIMIT 1"
+      }
+    },
+    {
+      "step": "pushit_send",
+      "name": "pushSend",
+      "options": {
+        "mode": "fromQuery",
+        "sourceData": "{{query}}",
+        "endpointColumn": "endpoint",
+        "p256dhColumn": "p256dh",
+        "authColumn": "auth",
+        "userIdColumn": "user_uuid",
+        "entityIdColumn": "entity_id",
+        "title": "Mr Cheese",
+        "body": "I hope you are enjoying this extension.  Please Buy Me a Coffee if you can afford it.  Doing this really helps me to create further extensions like this one"
+      }
+    }
+  ],
+  "notes": [
+    "Call via GET or POST after a browser subscription exists — e.g. curl http://localhost:3000/api/pushNotifications/test",
+    "Set nocsrf: true on the API if testing without CSRF token.",
+    "Replace title/body in production with real alert text bound from your data."
+  ]
+}

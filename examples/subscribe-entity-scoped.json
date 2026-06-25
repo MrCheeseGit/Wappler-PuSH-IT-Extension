@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "title": "Subscribe to push (entity-scoped)",
+    "description": "Portal user opts in; subscription stored with entityId for scoped notifications."
+  },
+  "flow": [
+    {
+      "step": "pushit_prepare",
+      "name": "pushPrepare",
+      "options": {
+        "subscription": "{{$_POST.subscription}}",
+        "userUUID": "{{securityProvider.identity}}",
+        "entityId": "{{$_POST.entityId}}",
+        "eventTypes": "{{$_POST.eventTypes}}"
+      }
+    },
+    {
+      "step": "dmxDatabaseInsert",
+      "name": "saveSubscription",
+      "comment": "Use your connection and table. Map fields from pushPrepare via data picker.",
+      "fieldMapping": {
+        "endpoint": "{{pushPrepare.endpoint}}",
+        "p256dh": "{{pushPrepare.p256dh}}",
+        "auth": "{{pushPrepare.auth}}",
+        "user_uuid": "{{pushPrepare.userUUID}}",
+        "entity_id": "{{pushPrepare.entityId}}",
+        "event_types": "{{pushPrepare.eventTypes}}",
+        "subscription_json": "{{pushPrepare.subscriptionJson}}"
+      }
+    }
+  ],
+  "notes": [
+    "Browser subscribe page must POST subscription JSON from PushManager.subscribe().",
+    "Expose VAPID_PUBLIC_KEY to the page (env or a small read-only API).",
+    "Register a service worker that handles push and notificationclick."
+  ]
+}

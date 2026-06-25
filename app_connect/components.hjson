@@ -1,0 +1,640 @@
+{
+  components: [
+    {
+      type: 'dmx-pushit-subscribe'
+      selector: 'dmx-pushit-subscribe, [is=dmx-pushit-subscribe]'
+      framework: 'bootstrap5'
+      groupTitle: 'Mr Cheese'
+      groupIcon: 'fas fa-lg fa-cheese comp-exec'
+      title: 'PuSH-IT Subscribe: @@id@@'
+      icon: 'fas fa-lg fa-bell comp-data'
+      state: 'opened'
+      anyParent: true
+      dataPick: true
+      dataPickObject: true
+      outputType: 'object'
+      dataScheme: [
+        {name: 'status', type: 'text'}
+        {name: 'permission', type: 'text'}
+        {name: 'error', type: 'text'}
+        {name: 'endpoint', type: 'text'}
+        {name: 'loading', type: 'boolean'}
+        {name: 'subscribed', type: 'boolean'}
+      ]
+      template: '<dmx-pushit-subscribe id="@@id@@" vapid-public-url="/api/pushNotifications/vapid_public" subscribe-url="/api/pushNotifications/subscribe" unsubscribe-url="/api/pushNotifications/unsubscribe" service-worker-url="/pushit_service_worker.js" service-worker-scope="/" button-text="Enable notifications" subscribed-text="Notifications enabled" unsubscribe-text="Turn off notifications" denied-text="Notifications disabled" unsupported-text="Push not supported in this browser" button-class="btn btn-primary" unsubscribe-class="btn btn-outline-secondary"></dmx-pushit-subscribe>'
+      baseName: 'pushSubscribe'
+      help: 'Web Push opt-in: registers pushit_service_worker.js, fetches VAPID public key, subscribes, and POSTs JSON to your subscribe API (PuSH-IT Prepare + Database Insert on the server).'
+
+      properties: [
+        {
+          group: 'PuSH-IT Subscribe'
+          variables: [
+            {
+              name: 'compId'
+              optionName: 'id'
+              attribute: 'id'
+              title: 'ID'
+              type: 'text'
+              required: true
+              defaultValue: ''
+            }
+            {
+              name: 'vapidPublicUrl'
+              optionName: 'vapidPublicUrl'
+              attribute: 'vapid-public-url'
+              title: 'VAPID public key API'
+              type: 'file'
+              routePicker: true
+              required: true
+              defaultValue: '/api/pushNotifications/vapid_public'
+              help: 'Read-only API returning your VAPID public key (e.g. Set Value from {{$_ENV.VAPID_PUBLIC_KEY}}).'
+            }
+            {
+              name: 'subscribeUrl'
+              optionName: 'subscribeUrl'
+              attribute: 'subscribe-url'
+              title: 'Subscribe API'
+              type: 'file'
+              routePicker: true
+              required: true
+              defaultValue: '/api/pushNotifications/subscribe'
+              help: 'POST API: PuSH-IT Prepare → Database Insert. Expects JSON body with subscription (+ optional entityId).'
+            }
+            {
+              name: 'unsubscribeUrl'
+              optionName: 'unsubscribeUrl'
+              attribute: 'unsubscribe-url'
+              title: 'Unsubscribe API'
+              type: 'file'
+              routePicker: true
+              required: true
+              defaultValue: '/api/pushNotifications/unsubscribe'
+              help: 'POST API: PuSH-IT Deactivate → Database Update (active = 0). Same JSON shape as subscribe.'
+            }
+            {
+              name: 'statusUrl'
+              optionName: 'statusUrl'
+              attribute: 'status-url'
+              title: 'Subscription status API'
+              type: 'file'
+              routePicker: true
+              required: false
+              defaultValue: '/api/pushNotifications/subscription_status'
+              help: 'POST API for subscription status (route picker OK). Use web path /api/.../subscription_status — full project paths from the picker are normalized at runtime. Requires user-uuid.'
+            }
+            {
+              name: 'serviceWorkerUrl'
+              optionName: 'serviceWorkerUrl'
+              attribute: 'service-worker-url'
+              title: 'Service worker URL'
+              type: 'text'
+              defaultValue: '/pushit_service_worker.js'
+              help: 'Path under public/ — copy pushit_service_worker.js from the extension.'
+            }
+            {
+              name: 'serviceWorkerScope'
+              optionName: 'serviceWorkerScope'
+              attribute: 'service-worker-scope'
+              title: 'Service worker scope'
+              type: 'text'
+              defaultValue: '/'
+            }
+            {
+              name: 'entityId'
+              optionName: 'entityId'
+              attribute: 'entity-id'
+              title: 'Entity ID'
+              type: 'text'
+              dataBindings: true
+              defaultValue: ''
+              help: 'Bind with the expression picker (dmx-bind:entity-id) — e.g. userProfile.data.getUser.accountId. Plain user-uuid="path.to.value" stores the path as text.'
+            }
+            {
+              name: 'userUuid'
+              optionName: 'userUuid'
+              attribute: 'user-uuid'
+              title: 'User UUID'
+              type: 'text'
+              dataBindings: true
+              defaultValue: ''
+              help: 'Required when using subscription status API. Bind a unique logged-in user id (dmx-bind:user-uuid). Without it, status-url cannot tell who is subscribed.'
+            }
+            {
+              name: 'eventTypes'
+              optionName: 'eventTypes'
+              attribute: 'event-types'
+              title: 'Event types'
+              type: 'text'
+              dataBindings: true
+              defaultValue: ''
+              help: 'Optional comma list sent as eventTypes (e.g. reservation,account).'
+            }
+            {
+              name: 'buttonText'
+              optionName: 'buttonText'
+              attribute: 'button-text'
+              title: 'Enable button text'
+              type: 'text'
+              dataBindings: true
+              defaultValue: 'Enable notifications'
+              help: 'Label on the primary Enable button (idle / error states).'
+            }
+            {
+              name: 'subscribedText'
+              optionName: 'subscribedText'
+              attribute: 'subscribed-text'
+              title: 'Subscribed status text'
+              type: 'text'
+              dataBindings: true
+              defaultValue: 'Notifications enabled'
+              help: 'Green dot status label when push is active (not a button).'
+            }
+            {
+              name: 'unsubscribeText'
+              optionName: 'unsubscribeText'
+              attribute: 'unsubscribe-text'
+              title: 'Unsubscribe button text'
+              type: 'text'
+              dataBindings: true
+              defaultValue: 'Turn off notifications'
+            }
+            {
+              name: 'unsubscribeClass'
+              optionName: 'unsubscribeClass'
+              attribute: 'unsubscribe-class'
+              title: 'Unsubscribe button CSS class'
+              type: 'text'
+              defaultValue: 'btn btn-outline-secondary btn-sm'
+            }
+            {
+              name: 'showUnsubscribe'
+              optionName: 'showUnsubscribe'
+              attribute: 'show-unsubscribe'
+              title: 'Show unsubscribe button when subscribed'
+              type: 'boolean'
+              defaultValue: true
+            }
+            {
+              name: 'deniedText'
+              optionName: 'deniedText'
+              attribute: 'denied-text'
+              title: 'Inactive status text'
+              type: 'text'
+              dataBindings: true
+              defaultValue: 'Notifications disabled'
+              help: 'Red dot status label when push is off (idle, after unsubscribe, or browser denied).'
+            }
+            {
+              name: 'unsupportedText'
+              optionName: 'unsupportedText'
+              attribute: 'unsupported-text'
+              title: 'Unsupported button text'
+              type: 'text'
+              dataBindings: true
+              defaultValue: 'Push not supported in this browser'
+            }
+            {
+              name: 'buttonClass'
+              optionName: 'buttonClass'
+              attribute: 'button-class'
+              title: 'Button CSS class'
+              type: 'text'
+              defaultValue: 'btn btn-primary'
+            }
+            {
+              name: 'hideWhenSubscribed'
+              optionName: 'hideWhenSubscribed'
+              attribute: 'hide-when-subscribed'
+              title: 'Hide when subscribed / denied / unsupported'
+              type: 'boolean'
+              defaultValue: false
+              help: 'When off, the button stays visible with status text (recommended for design view and debugging).'
+            }
+            {
+              name: 'autoSubscribe'
+              optionName: 'autoSubscribe'
+              attribute: 'auto-subscribe'
+              title: 'Subscribe on page load'
+              type: 'boolean'
+              defaultValue: false
+              help: 'Requests permission immediately — use sparingly; most sites prefer a button click.'
+            }
+            {
+              name: 'disabled'
+              optionName: 'disabled'
+              attribute: 'disabled'
+              title: 'Disabled'
+              type: 'boolean'
+              defaultValue: false
+            }
+          ]
+        }
+      ]
+
+      actionsScheme: [
+        {
+          addTitle: 'Subscribe to push'
+          title: 'Subscribe'
+          name: 'subscribe'
+          icon: 'fas fa-lg fa-bell comp-flow'
+          state: 'opened'
+          help: 'Register service worker, request permission, and POST subscription to your subscribe API.'
+          properties: []
+        }
+        {
+          addTitle: 'Unsubscribe from push'
+          title: 'Unsubscribe'
+          name: 'unsubscribe'
+          icon: 'fas fa-lg fa-bell-slash comp-flow'
+          state: 'opened'
+          help: 'POST deactivate to your API, then remove the browser push subscription.'
+          properties: []
+        }
+        {
+          addTitle: 'Refresh permission status'
+          title: 'Refresh'
+          name: 'refresh'
+          icon: 'fas fa-lg fa-sync comp-flow'
+          state: 'opened'
+          help: 'Re-read Notification.permission and update component data.'
+          properties: []
+        }
+      ]
+
+      children: []
+      allowed_children: {}
+
+      copyFiles: [
+        {src: 'includes/dmx-pushit-subscribe.js', dst: 'js/dmx-pushit-subscribe.js'}
+        {src: 'includes/dmx-pushit-subscribe.css', dst: 'css/dmx-pushit-subscribe.css'}
+        {src: 'includes/pushit_service_worker.js', dst: 'pushit_service_worker.js'}
+      ]
+
+      linkFiles: [
+        {src: 'css/dmx-pushit-subscribe.css', type: 'css'}
+        {src: 'js/dmx-pushit-subscribe.js', type: 'js', defer: true}
+      ]
+
+      cssOrder: ['dmx-pushit-subscribe.css']
+      jsOrder: ['dmx-pushit-subscribe.js']
+    }
+  ]
+
+  attributes: []
+
+  events: [
+    {
+      name: 'dmx-pushit-subscribe-success'
+      attributeStartsWith: 'dmx-on'
+      attribute: 'success'
+      title: 'Success'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-check comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitSuccessAction', 'pushitSuccessMods']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitSuccessAction'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'success'
+          isValue: true
+          actionsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+        {
+          name: 'pushitSuccessMods'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'success'
+          isModifiers: true
+          title: 'Modifiers:'
+          type: 'enum'
+          defaultValue: ''
+          initDisplay: 'none'
+          valuesType: 'event_modifiers'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+      help: 'Subscription saved via subscribe API.'
+    }
+    {
+      name: 'dmx-pushit-subscribe-subscribed'
+      attributeStartsWith: 'dmx-on'
+      attribute: 'subscribed'
+      title: 'Subscribed'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-bell comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitSubscribedAction', 'pushitSubscribedMods']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitSubscribedAction'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'subscribed'
+          isValue: true
+          actionsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+        {
+          name: 'pushitSubscribedMods'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'subscribed'
+          isModifiers: true
+          title: 'Modifiers:'
+          type: 'enum'
+          defaultValue: ''
+          initDisplay: 'none'
+          valuesType: 'event_modifiers'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+      help: 'Browser push subscription created.'
+    }
+    {
+      name: 'dmx-pushit-subscribe-denied'
+      attributeStartsWith: 'dmx-on'
+      attribute: 'denied'
+      title: 'Denied'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-ban comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitDeniedAction', 'pushitDeniedMods']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitDeniedAction'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'denied'
+          isValue: true
+          actionsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+        {
+          name: 'pushitDeniedMods'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'denied'
+          isModifiers: true
+          title: 'Modifiers:'
+          type: 'enum'
+          defaultValue: ''
+          initDisplay: 'none'
+          valuesType: 'event_modifiers'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+      help: 'User denied notification permission.'
+    }
+    {
+      name: 'dmx-pushit-subscribe-error'
+      attributeStartsWith: 'dmx-on'
+      attribute: 'error'
+      title: 'Error'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-exclamation-triangle comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitErrorAction', 'pushitErrorMods']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitErrorAction'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'error'
+          isValue: true
+          actionsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+        {
+          name: 'pushitErrorMods'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'error'
+          isModifiers: true
+          title: 'Modifiers:'
+          type: 'enum'
+          defaultValue: ''
+          initDisplay: 'none'
+          valuesType: 'event_modifiers'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+      help: 'Service worker, VAPID, subscribe API, or push error.'
+    }
+    {
+      name: 'dmx-pushit-subscribe-unsubscribed'
+      attributeStartsWith: 'dmx-on'
+      attribute: 'unsubscribed'
+      title: 'Unsubscribed'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-bell-slash comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitUnsubscribedAction', 'pushitUnsubscribedMods']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitUnsubscribedAction'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'unsubscribed'
+          isValue: true
+          actionsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+        {
+          name: 'pushitUnsubscribedMods'
+          attributeStartsWith: 'dmx-on'
+          attribute: 'unsubscribed'
+          isModifiers: true
+          title: 'Modifiers:'
+          type: 'enum'
+          defaultValue: ''
+          initDisplay: 'none'
+          valuesType: 'event_modifiers'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+      help: 'Browser push subscription removed and server row deactivated.'
+    }
+  ]
+
+  static_events: [
+    {
+      name: 'dmx-pushit-subscribe-success'
+      attribute: 'onsuccess'
+      title: 'Success'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-check comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitSuccessBehavior']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitSuccessBehavior'
+          attribute: 'onsuccess'
+          isValue: true
+          behaviorsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+    }
+    {
+      name: 'dmx-pushit-subscribe-subscribed'
+      attribute: 'onsubscribed'
+      title: 'Subscribed'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-bell comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitSubscribedBehavior']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitSubscribedBehavior'
+          attribute: 'onsubscribed'
+          isValue: true
+          behaviorsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+    }
+    {
+      name: 'dmx-pushit-subscribe-denied'
+      attribute: 'ondenied'
+      title: 'Denied'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-ban comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitDeniedBehavior']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitDeniedBehavior'
+          attribute: 'ondenied'
+          isValue: true
+          behaviorsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+    }
+    {
+      name: 'dmx-pushit-subscribe-error'
+      attribute: 'onerror'
+      title: 'Error'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-exclamation-triangle comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitErrorBehavior']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitErrorBehavior'
+          attribute: 'onerror'
+          isValue: true
+          behaviorsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+    }
+    {
+      name: 'dmx-pushit-subscribe-unsubscribed'
+      attribute: 'onunsubscribed'
+      title: 'Unsubscribed'
+      type: 'boolean'
+      display: 'fieldset'
+      icon: 'fas fa-lg fa-bell-slash comp-flow'
+      groupTitle: 'PuSH-IT Subscribe'
+      groupIcon: 'fas fa-lg fa-bell comp-data'
+      defaultValue: false
+      show: ['pushitUnsubscribedBehavior']
+      noChangeOnHide: true
+      groupEnabler: true
+      children: [
+        {
+          name: 'pushitUnsubscribedBehavior'
+          attribute: 'onunsubscribed'
+          isValue: true
+          behaviorsPicker: true
+          title: 'Action:'
+          type: 'text'
+          help: 'Choose the action to execute.'
+          defaultValue: ''
+          initDisplay: 'none'
+        }
+      ]
+      allowedOn: {'dmx-pushit-subscribe': true}
+    }
+  ]
+}
