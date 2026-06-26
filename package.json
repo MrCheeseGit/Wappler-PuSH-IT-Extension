@@ -1,7 +1,7 @@
 {
   "name": "wappler-push-it",
-  "version": "1.2.19",
-  "description": "PuSH-IT \u2014 Wappler Server Connect extension for Web Push (VAPID): prepare subscriptions and send notifications",
+  "version": "1.2.20",
+  "description": "PuSH-IT — Wappler Server Connect extension for Web Push (VAPID): prepare subscriptions and send notifications",
   "main": "server_connect/modules/pushit.js",
   "homepage": "https://www.mrcheese.co.uk",
   "repository": {
@@ -28,6 +28,6 @@
   "license": "SEE LICENSE IN LICENSE",
   "wappler": {
     "module": "pushit",
-    "version": "1.2.19"
+    "version": "1.2.20"
   }
 }
