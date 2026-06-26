@@ -17,6 +17,8 @@ This repository is a **generic product** for any Wappler project. Docs, comments
 
 ## Install
 
+Official Wappler guide: [How To Install Custom Wappler Extensions](https://docs.wappler.io/t/how-to-install-custom-wappler-extensions/49982/).
+
 | Path | |
 |------|--|
 | **npm** | Wappler Project Settings → Extensions (`wappler-push-it`) |
